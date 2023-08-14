@@ -5,6 +5,9 @@ class userInteracting {
         this.timeStart = Date.now();
     }
 }
+const   getUser = (ListUser, psid) => {
+    return ListUser.find(e => e.psid === psid);
+}
 const addUser = (ListUser, psid) => {
     const user = ListUser.find(e => e.psid === psid);
     if(user) {
@@ -32,6 +35,7 @@ const deleteUser = (ListUser, psid) => {
 export default {
     userInteracting,
     addUser,
+    getUser,
     deleteUser,
     updateUser
 
