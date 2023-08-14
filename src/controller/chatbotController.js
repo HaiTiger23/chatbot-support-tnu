@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import userInteractingController from "./userInteractingController.js";
+import accountController from "./accountController.js";
 const request = require("request");
 dotenv.config();
 
@@ -242,7 +243,7 @@ async function sendTKB(req, res) {
 function OptionSelected(message, user) {
     switch (user.step) {
         case "account_infor":
-            return addAccount(message, user);
+            return accountController.addAccount(message, user);
             break;
 
         default:
