@@ -8,7 +8,7 @@ let getHomePage = (req, res) => {
     return res.send("Home Page")
 };
 let getWebhook = (req, res) => {
-    
+    console.log("alo check");
     // Parse the query params
     let mode = req.query["hub.mode"];
     let token = req.query["hub.verify_token"];
