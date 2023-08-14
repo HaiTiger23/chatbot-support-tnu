@@ -186,7 +186,8 @@ function handlePostback(sender_psid, received_postback) {
     //   response = { "text": "Mày điêu, mày không gửi thì ai." }
     // }
     // Send the message to acknowledge the postback
-    console.log("-------------------------------------------List User đang hoạt động:------------------- ",ListUserInteracting);
+    console.log("-------------------------------------------List User đang hoạt động:------------------- ");
+    console.log(ListUserInteracting);
     console.log("================================================================");
     callSendAPI(sender_psid, response);
 }
