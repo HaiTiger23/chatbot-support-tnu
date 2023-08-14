@@ -100,10 +100,7 @@ function handleMessage(sender_psid, received_message) {
                 },
             };
         } else if (message.startsWith("/stop")) {
-            userInteractingController.deleteUser(
-                ListUserInteracting,
-                sender_psid
-            );
+            ListUserInteracting = ListUserInteracting.filter(e => e.psid !== sender_psid)
             response = {
                 text: `Hẹn gặp lại bạn sau`,
             };
@@ -243,6 +240,8 @@ async function sendTKB(req, res) {
 function OptionSelected(message, user) {
     switch (user.step) {
         case "account_infor":
+            user.step = "account_infor_complete";
+            userInteractingController.updateUser(ListUserInteracting, user);
             return accountController.addAccount(message, user);
             break;
 

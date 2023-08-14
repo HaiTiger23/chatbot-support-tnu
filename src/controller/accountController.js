@@ -2,7 +2,7 @@ const addAccount = function(message,user) {
     try {
         let [SvID, password] = message.split('|');
         SvID = SvID.trim()
-        password = SvID.trim()
+        password = password.trim()
         return {
             text:   "SVID: " + SvID + "\n" +
                     "Password: " + password

@@ -28,15 +28,12 @@ const updateUser = (ListUser, user) => {
         }
     }
 }
-const deleteUser = (ListUser, psid) => {
-    ListUser = ListUser.filter(e => e.psid !== psid)
-}
+
 
 export default {
     userInteracting,
     addUser,
     getUser,
-    deleteUser,
     updateUser
 
 };
