@@ -24,6 +24,6 @@ initWebRoutes(app);
 
 let port = process.env.PORT || 3000;
 app.listen(port, async () => {
-    await connect();
+    // await connect();
     console.log("Chatbot running at "+port);
 })
