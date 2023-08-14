@@ -35,6 +35,8 @@ let postWebhook = (req, res) => {
         body.entry.forEach((entry) => {
             // Gets the body of the webhook event
             let webhook_event = entry.messaging[0];
+            console.log(entry);
+            console.log("-------------------------");
             console.log(webhook_event);
 
             // Get the sender PSID
@@ -150,8 +152,14 @@ function callSendAPI(sender_psid, response) {
       }
     }); 
   }
+async function sendTKB(req, res) {
+    let response = { "text": "Tiết: 6 --> 8 \n\nMôn học: Quản lý dự án Công nghệ thông tin-1-23 (K19AB.KTPM.D1.K1.N01) \n\nPhòng học: C2.203 (CLC) " }
+    await callSendAPI(6413765355409451, response);
+    res.send("send success");
+}
 export default {
     getHomePage,
     getWebhook,
     postWebhook,
+    sendTKB
 };

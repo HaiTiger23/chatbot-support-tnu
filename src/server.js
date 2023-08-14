@@ -4,10 +4,11 @@ import viewEngine from "./config/viewEngine.js"; // Import module viewEngine t�
 import initWebRoutes from "./routers/web.js"; // Import module initWebRoutes từ file web.js để cấu hình router
 import bodyParser from "body-parser"; // Import module body-parser để phân tích và xử lý dữ liệu từ request body
 import dotenv from "dotenv"; // Import module dotenv
+import connect from "../database/database.js";
 
 // Tạo ứng dụng Express
-let app = express();
 dotenv.config();
+let app = express();
 
 // Cấu hình view engine
 viewEngine(app);
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 initWebRoutes(app);
 
 let port = process.env.PORT || 3000;
-app.listen(port, () => {
+app.listen(port, async () => {
+    await connect();
     console.log("Chatbot running at "+port);
 })
