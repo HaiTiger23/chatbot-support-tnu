@@ -1,7 +1,9 @@
 import dotenv from "dotenv";
+import {addUserToList, updateUserFromList} from './userInteractingController.js'
 const request = require('request');
 dotenv.config();
 
+var ListUserInteracting = [];
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
@@ -30,15 +32,12 @@ let getWebhook = (req, res) => {
 };
 let postWebhook = (req, res) => {
     let body = req.body;
-    console.log("chạy vào post");
     if (body.object === "page") {
         body.entry.forEach((entry) => {
             // Gets the body of the webhook event
             let webhook_event = entry.messaging[0];
             console.log(entry);
-            console.log("-------------------------");
             console.log(webhook_event);
-
             // Get the sender PSID
             let sender_psid = webhook_event.sender.id;
             console.log("Sender PSID: " + sender_psid);
@@ -62,11 +61,12 @@ let postWebhook = (req, res) => {
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
     let response;
-
+    
     // Check if the message contains text
     if (received_message.text) {    
         const message = received_message.text
         if(message.startsWith('/start')) {
+            addUserToList(ListUserInteracting, sender_psid);
             response = {
                 "attachment": {
                   "type": "template",
@@ -97,6 +97,12 @@ function handleMessage(sender_psid, received_message) {
                 }
               }
             }
+        else if(message.startsWith('/stop')) {
+            ListUserInteracting.remove(e => e.psid === sender_psid);
+            response = {
+                "text":  `Hẹn gặp lại bạn sau`
+              } 
+        }
         else {
             response = {
                 "text":  `Gõ /start để bắt đầu`
@@ -140,10 +146,11 @@ function handleMessage(sender_psid, received_message) {
 // Handles messaging_postbacks events
 function handlePostback(sender_psid, received_postback) {
     let response;
-  
     // Get the payload for the postback
     let payload = received_postback.payload;
-  
+    let user = ListUserInteracting.find(e => e.psid === sender_psid);
+    user.step = payload;
+    updateUserFromList(ListUserInteracting, user);
     // Set the response based on the postback payload
     switch (payload) {
         case 'account_infor':
@@ -166,6 +173,7 @@ function handlePostback(sender_psid, received_postback) {
     // }
     // Send the message to acknowledge the postback
     callSendAPI(sender_psid, response);
+    console.log(ListUserInteracting);
 }
 
 // Sends response messages via the Send API
