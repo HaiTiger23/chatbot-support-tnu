@@ -61,14 +61,9 @@ let postWebhook = (req, res) => {
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
     let response;
-    
+
     // Check if the message contains text
     if (received_message.text) {
-        let user = userInteractingController.getUser(
-            ListUserInteracting,
-            sender_psid
-        );
-
         const message = received_message.text;
         if (message.startsWith("/start")) {
             userInteractingController.addUser(ListUserInteracting, sender_psid);
@@ -112,6 +107,10 @@ function handleMessage(sender_psid, received_message) {
                 text: `Hẹn gặp lại bạn sau`,
             };
         } else {
+            let user = userInteractingController.getUser(
+                ListUserInteracting,
+                sender_psid
+            );
             if (user) {
                 // Kiểm tra user có tồn tại không
                 response = OptionSelected(message, user);
