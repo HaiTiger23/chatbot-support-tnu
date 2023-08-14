@@ -172,8 +172,8 @@ function handlePostback(sender_psid, received_postback) {
     //   response = { "text": "Mày điêu, mày không gửi thì ai." }
     // }
     // Send the message to acknowledge the postback
-    callSendAPI(sender_psid, response);
     console.log(ListUserInteracting);
+    callSendAPI(sender_psid, response);
 }
 
 // Sends response messages via the Send API
