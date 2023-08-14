@@ -29,7 +29,7 @@ let getWebhook = (req, res) => {
 }
 let postWebhook = (req, res) => {
     let body = req.body;
-
+    console.log("chạy vào post");
     if (body.object === "page") {
         body.entry.forEach(entry => {
             let webhook_event = entry.messaging[0];
