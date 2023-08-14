@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import {addUserToList, updateUserFromList} from './userInteractingController.js'
+import userInteractingController from './userInteractingController.js'
 const request = require('request');
 dotenv.config();
 
@@ -66,7 +66,7 @@ function handleMessage(sender_psid, received_message) {
     if (received_message.text) {    
         const message = received_message.text
         if(message.startsWith('/start')) {
-            addUserToList(ListUserInteracting, sender_psid);
+            userInteractingController.addUserToList(ListUserInteracting, sender_psid);
             response = {
                 "attachment": {
                   "type": "template",
@@ -150,7 +150,7 @@ function handlePostback(sender_psid, received_postback) {
     let payload = received_postback.payload;
     let user = ListUserInteracting.find(e => e.psid === sender_psid);
     user.step = payload;
-    updateUserFromList(ListUserInteracting, user);
+    userInteractingController.updateUserFromList(ListUserInteracting, user);
     // Set the response based on the postback payload
     switch (payload) {
         case 'account_infor':
