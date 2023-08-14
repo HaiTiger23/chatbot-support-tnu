@@ -111,7 +111,19 @@ function handleMessage(sender_psid, received_message) {
 
 // Handles messaging_postbacks events
 function handlePostback(sender_psid, received_postback) {
-    console.log("Handle postback");
+    let response;
+  
+    // Get the payload for the postback
+    let payload = received_postback.payload;
+  
+    // Set the response based on the postback payload
+    if (payload === 'yes') {
+      response = { "text": "Gửi làm gì, ai cần!" }
+    } else if (payload === 'no') {
+      response = { "text": "Mày điêu, mày không gửi thì ai." }
+    }
+    // Send the message to acknowledge the postback
+    callSendAPI(sender_psid, response);
 }
 
 // Sends response messages via the Send API
