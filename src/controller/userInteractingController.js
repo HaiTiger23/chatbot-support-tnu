@@ -5,7 +5,7 @@ class userInteracting {
         this.timeStart = Date.now();
     }
 }
-const addUserToList = (ListUser, psid) => {
+const addUser = (ListUser, psid) => {
     const user = ListUser.find(e => e.psid === psid);
     if(user) {
         user.step = 0;
@@ -16,7 +16,7 @@ const addUserToList = (ListUser, psid) => {
     ListUser.push(newUser);
     return newUser;
 }
-const updateUserFromList = (ListUser, user) => {
+const updateUser = (ListUser, user) => {
     for (let index = 0; index < ListUser.length; index++) {
         const element = ListUser[index];
         if(element.psid === user.psid ) { 
@@ -25,10 +25,14 @@ const updateUserFromList = (ListUser, user) => {
         }
     }
 }
+const deleteUser = (ListUser, psid) => {
+    ListUser = ListUser.filter(e => e.psid !== psid)
+}
 
 export default {
     userInteracting,
-    addUserToList,
-    updateUserFromList
+    addUser,
+    deleteUser,
+    updateUser
 
 };

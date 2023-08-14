@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
-import userInteractingController from './userInteractingController.js'
-const request = require('request');
+import userInteractingController from "./userInteractingController.js";
+const request = require("request");
 dotenv.config();
 
 var ListUserInteracting = [];
@@ -61,84 +61,88 @@ let postWebhook = (req, res) => {
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
     let response;
-    
+
     // Check if the message contains text
-    if (received_message.text) {    
-        const message = received_message.text
-        if(message.startsWith('/start')) {
-            userInteractingController.addUserToList(ListUserInteracting, sender_psid);
+    if (received_message.text) {
+        const message = received_message.text;
+        if (message.startsWith("/start")) {
+            userInteractingController.addUser(
+                ListUserInteracting,
+                sender_psid
+            );
             response = {
-                "attachment": {
-                  "type": "template",
-                  "payload": {
-                    "template_type": "generic",
-                    "elements": [{
-                      "title": "Chọn chức năng bạn muốn sử dụng?",
-                      "subtitle": "Trả lời ở nút dưới.",
-                      "buttons": [
-                        {
-                          "type": "postback",
-                          "title": "thông tin đăng nhập",
-                          "payload": "account_infor",
-                        },
-                        {
-                          "type": "postback",
-                          "title": "Xem TKB hôm nay",
-                          "payload": "view_schedule_today",
-                        },
-                        {
-                            "type": "postback",
-                            "title": "Xem TKB cả tuần",
-                            "payload": "view_schedule_week",
-                          }
-                      ],
-                    }]
-                  }
-                }
-              }
-            }
-        else if(message.startsWith('/stop')) {
-            ListUserInteracting.remove(e => e.psid === sender_psid);
+                attachment: {
+                    type: "template",
+                    payload: {
+                        template_type: "generic",
+                        elements: [
+                            {
+                                title: "Chọn chức năng bạn muốn sử dụng?",
+                                subtitle: "Trả lời ở nút dưới.",
+                                buttons: [
+                                    {
+                                        type: "postback",
+                                        title: "thông tin đăng nhập",
+                                        payload: "account_infor",
+                                    },
+                                    {
+                                        type: "postback",
+                                        title: "Xem TKB hôm nay",
+                                        payload: "view_schedule_today",
+                                    },
+                                    {
+                                        type: "postback",
+                                        title: "Xem TKB cả tuần",
+                                        payload: "view_schedule_week",
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                },
+            };
+        } else if (message.startsWith("/stop")) {
+            userInteractingController.deleteUser(ListUserInteracting, sender_psid);
             response = {
-                "text":  `Hẹn gặp lại bạn sau`
-              } 
+                text: `Hẹn gặp lại bạn sau`,
+            };
+        } else {
+            response = {
+                text: `Gõ /start để bắt đầu`,
+            };
         }
-        else {
-            response = {
-                "text":  `Gõ /start để bắt đầu`
-              } 
-        }
-    
     } else if (received_message.attachments) {
         // Get the URL of the message attachment
         let attachment_url = received_message.attachments[0].payload.url;
         response = {
-          "attachment": {
-            "type": "template",
-            "payload": {
-              "template_type": "generic",
-              "elements": [{
-                "title": "Mày gửi ảnh này à?",
-                "subtitle": "Trả lời ở nút sau.",
-                "image_url": attachment_url,
-                "buttons": [
-                  {
-                    "type": "postback",
-                    "title": "ừ!",
-                    "payload": "yes",
-                  },
-                  {
-                    "type": "postback",
-                    "title": "Không!",
-                    "payload": "no",
-                  }
-                ],
-              }]
-            }
-          }
-        }
-      }  
-    
+            attachment: {
+                type: "template",
+                payload: {
+                    template_type: "generic",
+                    elements: [
+                        {
+                            title: "Mày gửi ảnh này à?",
+                            subtitle: "Trả lời ở nút sau.",
+                            image_url: attachment_url,
+                            buttons: [
+                                {
+                                    type: "postback",
+                                    title: "ừ!",
+                                    payload: "yes",
+                                },
+                                {
+                                    type: "postback",
+                                    title: "Không!",
+                                    payload: "no",
+                                },
+                            ],
+                        },
+                    ],
+                },
+            },
+        };
+    }
+
     // Sends the response message
     callSendAPI(sender_psid, response);
 }
@@ -148,23 +152,33 @@ function handlePostback(sender_psid, received_postback) {
     let response;
     // Get the payload for the postback
     let payload = received_postback.payload;
-    let user = ListUserInteracting.find(e => e.psid === sender_psid);
-    user.step = payload;
-    userInteractingController.updateUserFromList(ListUserInteracting, user);
-    // Set the response based on the postback payload
-    switch (payload) {
-        case 'account_infor':
-            response = { "text": "Nhập thông tin tài khoản mật khẩu theo mẫu: Tài khoản|Mật khẩu" }
-            break;
-        case 'view_schedule_today':
-            response = { "text": "Thời khóa biểu hôm nay ngày....!" }
-            break;
-        case 'view_schedule_week':
-            response = { "text": "Thời khóa biểu tuần này từ ... đến ngày .... " }
-            break;
-    
-        default:
-            break;
+    let user = ListUserInteracting.find((e) => e.psid === sender_psid);
+    if (user) {
+        user.step = payload;
+        userInteractingController.updateUser(ListUserInteracting, user);
+        // Set the response based on the postback payload
+        switch (payload) {
+            case "account_infor":
+                response = {
+                    text: "Nhập thông tin tài khoản mật khẩu theo mẫu: Tài khoản|Mật khẩu",
+                };
+                break;
+            case "view_schedule_today":
+                response = { text: "Thời khóa biểu hôm nay ngày....!" };
+                break;
+            case "view_schedule_week":
+                response = {
+                    text: "Thời khóa biểu tuần này từ ... đến ngày .... ",
+                };
+                break;
+
+            default:
+                break;
+        }
+    }else {
+        response = {
+            text: `Gõ /start để bắt đầu`,
+        };
     }
     // if (payload === 'yes') {
     //   response = { "text": "Gửi làm gì, ai cần!" }
@@ -172,7 +186,7 @@ function handlePostback(sender_psid, received_postback) {
     //   response = { "text": "Mày điêu, mày không gửi thì ai." }
     // }
     // Send the message to acknowledge the postback
-    console.log(ListUserInteracting);
+    console.log("List User đang hoạt động: ",ListUserInteracting);
     callSendAPI(sender_psid, response);
 }
 
@@ -180,28 +194,33 @@ function handlePostback(sender_psid, received_postback) {
 function callSendAPI(sender_psid, response) {
     // Construct the message body
     let request_body = {
-      "recipient": {
-        "id": sender_psid
-      },
-      "message": response
-    }
-  
+        recipient: {
+            id: sender_psid,
+        },
+        message: response,
+    };
+
     // Send the HTTP request to the Messenger Platform
-    request({
-      "uri": "https://graph.facebook.com/v2.6/me/messages",
-      "qs": { "access_token": PAGE_ACCESS_TOKEN },
-      "method": "POST",
-      "json": request_body
-    }, (err, res, body) => {
-      if (!err) {
-        console.log('message sent!')
-      } else {
-        console.error("Unable to send message:" + err);
-      }
-    }); 
-  }
+    request(
+        {
+            uri: "https://graph.facebook.com/v2.6/me/messages",
+            qs: { access_token: PAGE_ACCESS_TOKEN },
+            method: "POST",
+            json: request_body,
+        },
+        (err, res, body) => {
+            if (!err) {
+                console.log("message sent!");
+            } else {
+                console.error("Unable to send message:" + err);
+            }
+        }
+    );
+}
 async function sendTKB(req, res) {
-    let response = { "text": "Tiết: 6 --> 8 \n\nMôn học: Quản lý dự án Công nghệ thông tin-1-23 (K19AB.KTPM.D1.K1.N01) \n\nPhòng học: C2.203 (CLC) " }
+    let response = {
+        text: "Tiết: 6 --> 8 \n\nMôn học: Quản lý dự án Công nghệ thông tin-1-23 (K19AB.KTPM.D1.K1.N01) \n\nPhòng học: C2.203 (CLC) ",
+    };
     await callSendAPI(6413765355409451, response);
     res.send("send success");
 }
@@ -209,5 +228,5 @@ export default {
     getHomePage,
     getWebhook,
     postWebhook,
-    sendTKB
+    sendTKB,
 };
