@@ -239,7 +239,7 @@ async function sendTKB(req, res) {
     await callSendAPI(6413765355409451, response);
     res.send("send success");
 }
-function OptionSelected() {
+function OptionSelected(message, user) {
     switch (user.step) {
         case "account_infor":
             return addAccount(message, user);
