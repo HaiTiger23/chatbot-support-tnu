@@ -64,7 +64,7 @@ function handleMessage(sender_psid, received_message) {
     // Check if the message contains text
     if (received_message.text) {    
         const message = received_message.text
-        if(message.startWith('/start')) {
+        if(message.startsWith('/start')) {
             response = {
                 "text": `Hãy nhập thông tin cá nhân của bạn`
               }
@@ -72,8 +72,7 @@ function handleMessage(sender_psid, received_message) {
         else {
             response = {
                 "text":  `Gõ /start để bắt đầu`
-              }
-              
+              } 
         }
     
     }  
