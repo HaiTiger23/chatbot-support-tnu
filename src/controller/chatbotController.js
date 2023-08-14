@@ -61,17 +61,17 @@ let postWebhook = (req, res) => {
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
     let response;
-
+    
     // Check if the message contains text
     if (received_message.text) {
-        let user = userInteractingController.getUser(ListUserInteracting, sender_psid);
-        if(user) { // Kiểm tra user có tồn tại không
-            const message = received_message.text;
+        let user = userInteractingController.getUser(
+            ListUserInteracting,
+            sender_psid
+        );
+
+        const message = received_message.text;
         if (message.startsWith("/start")) {
-            userInteractingController.addUser(
-                ListUserInteracting,
-                sender_psid
-            );
+            userInteractingController.addUser(ListUserInteracting, sender_psid);
             response = {
                 attachment: {
                     type: "template",
@@ -103,20 +103,24 @@ function handleMessage(sender_psid, received_message) {
                     },
                 },
             };
-        }if (message.startsWith("/stop")) {
-            userInteractingController.deleteUser(ListUserInteracting, sender_psid);
+        } else if (message.startsWith("/stop")) {
+            userInteractingController.deleteUser(
+                ListUserInteracting,
+                sender_psid
+            );
             response = {
                 text: `Hẹn gặp lại bạn sau`,
             };
         } else {
-            response = OptionSelected(message, user)
+            if (user) {
+                // Kiểm tra user có tồn tại không
+                response = OptionSelected(message, user);
+            } else {
+                response = {
+                    text: `nhập /start để bắt đầu`,
+                };
+            }
         }
-        }else {
-            response = {
-                text: `nhập /start để bắt đầu`,
-            };
-        }
-        
     } else if (received_message.attachments) {
         // Get the URL of the message attachment
         let attachment_url = received_message.attachments[0].payload.url;
@@ -181,7 +185,7 @@ function handlePostback(sender_psid, received_postback) {
             default:
                 break;
         }
-    }else {
+    } else {
         response = {
             text: `Gõ /start để bắt đầu`,
         };
@@ -197,9 +201,13 @@ function handlePostback(sender_psid, received_postback) {
 
 // Sends response messages via the Send API
 function callSendAPI(sender_psid, response) {
-    console.log("-------------------------------------------List User đang hoạt động:------------------- ");
+    console.log(
+        "-------------------------------------------List User đang hoạt động:------------------- "
+    );
     console.log(ListUserInteracting);
-    console.log("================================================================");
+    console.log(
+        "================================================================"
+    );
     // Construct the message body
     let request_body = {
         recipient: {
@@ -232,16 +240,16 @@ async function sendTKB(req, res) {
     await callSendAPI(6413765355409451, response);
     res.send("send success");
 }
-function OptionSelected(    ) {
+function OptionSelected() {
     switch (user.step) {
         case "account_infor":
-            return  addAccount(message,user);
+            return addAccount(message, user);
             break;
-    
+
         default:
             return {
                 text: "Comming soon...",
-            }
+            };
             break;
     }
 }
