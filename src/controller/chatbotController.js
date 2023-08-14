@@ -75,7 +75,35 @@ function handleMessage(sender_psid, received_message) {
               } 
         }
     
-    }  
+    } else if (received_message.attachments) {
+        // Get the URL of the message attachment
+        let attachment_url = received_message.attachments[0].payload.url;
+        response = {
+          "attachment": {
+            "type": "template",
+            "payload": {
+              "template_type": "generic",
+              "elements": [{
+                "title": "Mày gửi ảnh này à?",
+                "subtitle": "Trả lời ở nút sau.",
+                "image_url": attachment_url,
+                "buttons": [
+                  {
+                    "type": "postback",
+                    "title": "ừ!",
+                    "payload": "yes",
+                  },
+                  {
+                    "type": "postback",
+                    "title": "Không!",
+                    "payload": "no",
+                  }
+                ],
+              }]
+            }
+          }
+        }
+      }  
     
     // Sends the response message
     callSendAPI(sender_psid, response);
