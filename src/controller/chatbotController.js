@@ -64,7 +64,9 @@ function handleMessage(sender_psid, received_message) {
 
     // Check if the message contains text
     if (received_message.text) {
-        const message = received_message.text;
+        let user = userInteractingController.getUser(ListUserInteracting, sender_psid);
+        if(user) { // Kiểm tra user có tồn tại không
+            const message = received_message.text;
         if (message.startsWith("/start")) {
             userInteractingController.addUser(
                 ListUserInteracting,
@@ -101,16 +103,20 @@ function handleMessage(sender_psid, received_message) {
                     },
                 },
             };
-        } else if (message.startsWith("/stop")) {
+        }if (message.startsWith("/stop")) {
             userInteractingController.deleteUser(ListUserInteracting, sender_psid);
             response = {
                 text: `Hẹn gặp lại bạn sau`,
             };
         } else {
+            response = OptionSelected(message, user)
+        }
+        }else {
             response = {
-                text: `Gõ /start để bắt đầu`,
+                text: `nhập /start để bắt đầu`,
             };
         }
+        
     } else if (received_message.attachments) {
         // Get the URL of the message attachment
         let attachment_url = received_message.attachments[0].payload.url;
@@ -186,14 +192,14 @@ function handlePostback(sender_psid, received_postback) {
     //   response = { "text": "Mày điêu, mày không gửi thì ai." }
     // }
     // Send the message to acknowledge the postback
-    console.log("-------------------------------------------List User đang hoạt động:------------------- ");
-    console.log(ListUserInteracting);
-    console.log("================================================================");
     callSendAPI(sender_psid, response);
 }
 
 // Sends response messages via the Send API
 function callSendAPI(sender_psid, response) {
+    console.log("-------------------------------------------List User đang hoạt động:------------------- ");
+    console.log(ListUserInteracting);
+    console.log("================================================================");
     // Construct the message body
     let request_body = {
         recipient: {
@@ -225,6 +231,19 @@ async function sendTKB(req, res) {
     };
     await callSendAPI(6413765355409451, response);
     res.send("send success");
+}
+function OptionSelected(    ) {
+    switch (user.step) {
+        case "account_infor":
+            return  addAccount(message,user);
+            break;
+    
+        default:
+            return {
+                text: "Comming soon...",
+            }
+            break;
+    }
 }
 export default {
     getHomePage,
