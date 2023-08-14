@@ -68,7 +68,33 @@ function handleMessage(sender_psid, received_message) {
         const message = received_message.text
         if(message.startsWith('/start')) {
             response = {
-                "text": `Hãy nhập thông tin cá nhân của bạn`
+                "attachment": {
+                  "type": "template",
+                  "payload": {
+                    "template_type": "generic",
+                    "elements": [{
+                      "title": "Chọn chức năng bạn muốn sử dụng?",
+                      "subtitle": "Trả lời ở nút dưới.",
+                      "buttons": [
+                        {
+                          "type": "postback",
+                          "title": "Thêm/ Thay đổi thông tin đăng nhập",
+                          "payload": "account_infor",
+                        },
+                        {
+                          "type": "postback",
+                          "title": "Xem thời khóa biểu hôm nay",
+                          "payload": "view_schedule_today",
+                        },
+                        {
+                            "type": "postback",
+                            "title": "Xem thời khóa biểu cả tuần này",
+                            "payload": "view_schedule_week",
+                          }
+                      ],
+                    }]
+                  }
+                }
               }
             }
         else {
