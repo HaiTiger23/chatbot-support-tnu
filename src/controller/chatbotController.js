@@ -78,17 +78,17 @@ function handleMessage(sender_psid, received_message) {
                       "buttons": [
                         {
                           "type": "postback",
-                          "title": "Thêm/ Thay đổi thông tin đăng nhập",
+                          "title": "thông tin đăng nhập",
                           "payload": "account_infor",
                         },
                         {
                           "type": "postback",
-                          "title": "Xem thời khóa biểu hôm nay",
+                          "title": "Xem TKB hôm nay",
                           "payload": "view_schedule_today",
                         },
                         {
                             "type": "postback",
-                            "title": "Xem thời khóa biểu cả tuần này",
+                            "title": "Xem TKB cả tuần",
                             "payload": "view_schedule_week",
                           }
                       ],
@@ -145,11 +145,25 @@ function handlePostback(sender_psid, received_postback) {
     let payload = received_postback.payload;
   
     // Set the response based on the postback payload
-    if (payload === 'yes') {
-      response = { "text": "Gửi làm gì, ai cần!" }
-    } else if (payload === 'no') {
-      response = { "text": "Mày điêu, mày không gửi thì ai." }
+    switch (payload) {
+        case 'account_infor':
+            response = { "text": "Nhập thông tin tài khoản mật khẩu theo mẫu: Tài khoản|Mật khẩu" }
+            break;
+        case 'view_schedule_today':
+            response = { "text": "Thời khóa biểu hôm nay ngày....!" }
+            break;
+        case 'view_schedule_week':
+            response = { "text": "Thời khóa biểu tuần này từ ... đến ngày .... " }
+            break;
+    
+        default:
+            break;
     }
+    // if (payload === 'yes') {
+    //   response = { "text": "Gửi làm gì, ai cần!" }
+    // } else if (payload === 'no') {
+    //   response = { "text": "Mày điêu, mày không gửi thì ai." }
+    // }
     // Send the message to acknowledge the postback
     callSendAPI(sender_psid, response);
 }
