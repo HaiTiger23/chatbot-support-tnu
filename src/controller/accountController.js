@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer-extra");
+const puppeteer = require("puppeteer");
 const log = require("log-to-file");
 import { randomInt } from "crypto";
 const addAccount = async function (message, user) {
