@@ -3,7 +3,6 @@ import userInteractingController from "./userInteractingController.js";
 import accountController from "./accountController.js";
 import Account from "../models/account.js";
 const request = require("request");
-const log = require('log-to-file');
 dotenv.config();
 
 var ListUserInteracting = [];
@@ -35,7 +34,8 @@ let getWebhook = (req, res) => {
 };
 let postWebhook = (req, res) => {
     let body = req.body;
-    log(body);
+    console.log("Body:.............................");
+    console.log(JSON.stringify(body, null, 4));
     if (body.object === "page") {
         body.entry.forEach( async (entry) => {
             // Gets the body of the webhook event
