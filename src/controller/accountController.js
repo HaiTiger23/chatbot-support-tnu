@@ -97,7 +97,7 @@ let fillterTKB = (tkb) => {
                             ngay : ngayThang.setDate(ngayThang.getDate() + thu - 1),
                             tiet : item.split("Thứ "+thu, 2)[1],
                             monHoc : element.lopHocPhan,
-                            diaDiem : diaDiem,
+                            diaDiem : diaDiem,   
                             giangVien : element.giangVien,
                         };
                         tkbComplete.push(tietHoc);
