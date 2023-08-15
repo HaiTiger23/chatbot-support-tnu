@@ -3,6 +3,7 @@ const addAccount = function(message,user) {
         let [SvID, password] = message.split('|');
         SvID = SvID.trim()
         password = password.trim()
+        
         return {
             text:   "SVID: " + SvID + "\n" +
                     "Password: " + password
@@ -10,7 +11,7 @@ const addAccount = function(message,user) {
     } catch (e) {
         console.log(e);
         return {
-            text:  "Lỗi thử lại sau..."
+            text:  "Lỗi thử lại ..."
         }
     }
    
