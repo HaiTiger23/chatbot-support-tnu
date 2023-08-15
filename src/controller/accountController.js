@@ -22,7 +22,8 @@ const addAccount = async function (message, user) {
 const getTKB = async (ID, pass) => {
     const url = process.env.URL_GET_TKB;
     let browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
+        args: ["--no-sandbox"],
     });
     let page = await browser.newPage();
     await page.setExtraHTTPHeaders({
