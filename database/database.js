@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
+import dotenv from "dotenv"; // Import module dotenv
 
+dotenv.config();
 mongoose.set('strictQuery', true);
 
 async function connect() {
