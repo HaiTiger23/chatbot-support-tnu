@@ -63,7 +63,7 @@ let postWebhook = (req, res) => {
     }
 };
 // Handles messages events
-function handleMessage(sender_psid, received_message) {
+async function handleMessage(sender_psid, received_message) {
     let response;
 
     // Check if the message contains text
@@ -114,7 +114,7 @@ function handleMessage(sender_psid, received_message) {
             );
             if (user) {
                 // Kiểm tra user có tồn tại không
-                response = OptionSelected(message, user);
+                response = await OptionSelected(message, user);
             } else {
                 response = {
                     text: `nhập /start để bắt đầu`,
@@ -245,12 +245,12 @@ async function sendTKB(req, res) {
     await callSendAPI(6413765355409451, response);
     res.send("send success");
 }
-function OptionSelected(message, user) {
+async function OptionSelected(message, user) {
     switch (user.step) {
         case "account_infor":
             user.step = "account_infor_complete";
             userInteractingController.updateUser(ListUserInteracting, user);
-            return accountController.addAccount(message, user);
+            return await accountController.addAccount(message, user);
             break;
 
         default:
