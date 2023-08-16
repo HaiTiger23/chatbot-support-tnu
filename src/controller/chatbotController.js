@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import userInteractingController from "./userInteractingController.js";
 import accountController from "./accountController.js";
 import Account from "../models/account.js";
+import lessonController from "./lessonController.js";
 const request = require("request");
 dotenv.config();
 
@@ -179,7 +180,9 @@ async function handlePostback(sender_psid, received_postback) {
                 }
                 break;
             case "view_schedule_today":
-                response = { text: "Thời khóa biểu hôm nay ngày....!" };
+                user.step = "0";
+                userInteractingController.updateUser(ListUserInteracting, user);
+                response = await lessonController.getLessonToday(user.psid);
                 break;
             case "view_schedule_week":
                 response = {
@@ -248,11 +251,10 @@ async function sendTKB(req, res) {
 async function OptionSelected(message, user) {
     switch (user.step) {
         case "account_infor":
-            user.step = "account_infor_complete";
+            user.step = "0";
             userInteractingController.updateUser(ListUserInteracting, user);
             return await accountController.addAccount(message, user);
             break;
-
         default:
             return {
                 text: "Comming soon...",
