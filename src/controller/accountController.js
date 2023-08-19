@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer-extra");
 const log = require("log-to-file");
 import { randomInt } from "crypto";
 import {Account,Lesson } from "../models/index.js";
-import moment from "moment/moment.js";
+import moment from "moment-timezone";
 const addAccount = async function (message, user) {
     try {
       
@@ -14,17 +14,17 @@ const addAccount = async function (message, user) {
         tkb = fillterTKB(tkb);
         console.log(tkb);
         log(JSON.stringify(tkb))
-        if(tkb.length > 0) {
-            let account = await createAccount(user, SvID, password);
-            await saveTKB(tkb, account);
-            return {
-                text: "Đăng nhập thành công. Bạn có thể dùng chức năng xem lịch",
-            };
-        }else {
-            return {
-                text: "sai thông tin tài khoản hoặc đã có lỗi xảy ra, thử lại sau",
-            };
-        }
+        // if(tkb.length > 0) {
+        //     let account = await createAccount(user, SvID, password);
+        //     await saveTKB(tkb, account);
+        //     return {
+        //         text: "Đăng nhập thành công. Bạn có thể dùng chức năng xem lịch",
+        //     };
+        // }else {
+        //     return {
+        //         text: "sai thông tin tài khoản hoặc đã có lỗi xảy ra, thử lại sau",
+        //     };
+        // }
     } catch (e) {
         console.log(e);
         return {
@@ -119,6 +119,7 @@ let fillterTKB = (tkb) => {
                     if (item.startsWith("Thứ")) {
                         let thu = parseInt(item.split(' ')[1]);
                         let dateThu = startDate.clone().add(thu -2, 'days')
+                        console.log("Bắt đầu"+ startDate.toString()+" Thứ "+ thu +" Kết quả: "+ dateThu.toString() +" to date: "+dateThu.toDate());
                        
                         while(dateThu.isSameOrBefore(endDate)) {
                             let tuan = period.substring(period.indexOf(': (')+3,period.indexOf(': (')+4);
@@ -143,14 +144,14 @@ let fillterTKB = (tkb) => {
     return tkbComplete;
 };
 function findRoom(tuan, diaDiem) {
-    console.log(diaDiem);
+   
     if (diaDiem.startsWith('(')) {
         for (const e of diaDiem.split('(')) {
             if (e.length > 0) {
                 let chuoiTim = e.split(')')[0];
-                console.log(chuoiTim);
+              
                 if (chuoiTim.indexOf(tuan) !== -1) {
-                    console.log("Tìm Thấy", e.split(')')[1]);
+                    
                     return  e.split(')')[1];
                 }
             }
@@ -161,8 +162,8 @@ function findRoom(tuan, diaDiem) {
 }
 function getDateBetween(period) {
     let PeriodArray =  period.trim().split(":")[0].split("đến");
-    let startDate = moment(PeriodArray[0].trim(), 'DD/MM/YYYY');
-    let endDate = moment(PeriodArray[1].trim(), 'DD/MM/YYYY');
+    let startDate = moment.tz(PeriodArray[0].trim(), 'DD/MM/YYYY',  'Asia/Bangkok');
+    let endDate = moment.tz(PeriodArray[1].trim(), 'DD/MM/YYYY',  'Asia/Bangkok');
     return {startDate, endDate};
 }
 export default {
