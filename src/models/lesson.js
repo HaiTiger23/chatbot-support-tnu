@@ -12,8 +12,11 @@ const Lesson = mongoose.model('Lesson',
        ngay: {
         type: Date,
        },
-       tiet: {
-        type: String,
+       TietBatDau: {
+        type: Number,
+       },
+       TietKetThuc: {
+        type: Number,
        },
        monHoc: {
         type: String,

@@ -3,6 +3,7 @@ import userInteractingController from "./userInteractingController.js";
 import accountController from "./accountController.js";
 import Account from "../models/account.js";
 import lessonController from "./lessonController.js";
+import axios from"axios"
 const request = require("request");
 dotenv.config();
 
@@ -35,18 +36,14 @@ let getWebhook = (req, res) => {
 };
 let postWebhook = (req, res) => {
     let body = req.body;
-    console.log("Body:.............................");
-    console.log(JSON.stringify(body, null, 4));
     if (body.object === "page") {
         body.entry.forEach( async (entry) => {
             // Gets the body of the webhook event
             let webhook_event = entry.messaging[0];
-            console.log(entry);
-            console.log(webhook_event);
             // Get the sender PSID
             let sender_psid = webhook_event.sender.id;
             console.log("Sender PSID: " + sender_psid);
-
+            
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
             if (webhook_event.message) {
@@ -69,8 +66,11 @@ async function handleMessage(sender_psid, received_message) {
 
     // Check if the message contains text
     if (received_message.text) {
+        // let userInfor = await getUserInfo(sender_psid,PAGE_ACCESS_TOKEN)
+        // console.log(userInfor);
         const message = received_message.text;
         if (message.startsWith("/start")) {
+            
             userInteractingController.addUser(ListUserInteracting, sender_psid);
             response = {
                 attachment: {
@@ -176,7 +176,7 @@ async function handlePostback(sender_psid, received_postback) {
                 }else {
                     user.step = payload;
                     userInteractingController.updateUser(ListUserInteracting, user);
-                    response = { text: "Nhập thông tin tài khoản mật khẩu theo mẫu: Tài khoản|Mật khẩu", };
+                    response = { text: "Bạn chưa có tài khoản, Nhập thông tin tài khoản mật khẩu theo mẫu: Tài khoản|Mật khẩu .Để đăng ký", };
                 }
                 break;
             case "view_schedule_today":
@@ -209,13 +209,6 @@ async function handlePostback(sender_psid, received_postback) {
 
 // Sends response messages via the Send API
 function callSendAPI(sender_psid, response) {
-    console.log(
-        "-------------------------------------------List User đang hoạt động:------------------- "
-    );
-    console.log(ListUserInteracting);
-    console.log(
-        "================================================================"
-    );
     // Construct the message body
     let request_body = {
         recipient: {
@@ -223,30 +216,28 @@ function callSendAPI(sender_psid, response) {
         },
         message: response,
     };
-
-    // Send the HTTP request to the Messenger Platform
-    request(
-        {
-            uri: "https://graph.facebook.com/v2.6/me/messages",
-            qs: { access_token: PAGE_ACCESS_TOKEN },
-            method: "POST",
-            json: request_body,
-        },
-        (err, res, body) => {
-            if (!err) {
-                console.log("message sent!");
-            } else {
-                console.error("Unable to send message:" + err);
+    try{
+        request(
+            {
+                uri: "https://graph.facebook.com/v2.6/me/messages",
+                qs: { access_token: PAGE_ACCESS_TOKEN },
+                method: "POST",
+                json: request_body,
+            },
+            (err, res, body) => {
+                if (!err) {
+                    console.log("message sent!");
+                    console.log("đã gửi message lại");
+                } else {
+                    console.error("Unable to send message:" + err);
+                }
             }
-        }
-    );
-}
-async function sendTKB(req, res) {
-    let response = {
-        text: "Tiết: 6 --> 8 \n\nMôn học: Quản lý dự án Công nghệ thông tin-1-23 (K19AB.KTPM.D1.K1.N01) \n\nPhòng học: C2.203 (CLC) ",
-    };
-    await callSendAPI(6413765355409451, response);
-    res.send("send success");
+        );
+    }catch(err) {
+        console.log(err);
+    }
+    // Send the HTTP request to the Messenger Platform
+    
 }
 async function OptionSelected(message, user) {
     switch (user.step) {
@@ -262,9 +253,17 @@ async function OptionSelected(message, user) {
             break;
     }
 }
+async function getUserInfo(psid, token) {
+    try {
+      const response = await axios.get(`https://graph.facebook.com/${psid}?fields=first_name,last_name,gender&access_token=${token}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching user info:', error);
+      throw error;
+    }
+  }
 export default {
     getHomePage,
     getWebhook,
     postWebhook,
-    sendTKB,
 };
